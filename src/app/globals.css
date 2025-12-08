@@ -1,8 +1,23 @@
 @import "tailwindcss";
 
+
+
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-poppins: 'Poppins', sans-serif;
+  --primary-dark-blue: #0A1C38;
+  --secondary-teal: #246E71;
+  --accent-cyan: #00BCD4;
+  --text-dark: #333;
+  --text-light: #555;
+  --background-light: #f9f9f9;
+  --background-white: #ffffff;
+  --border-light: #eee;
+  --shadow-light: rgba(0, 0, 0, 0.08);
+  --transition-speed: 0.3s ease;
+  --font-family-poppins: 'Poppins', sans-serif;
 }
 
 @theme inline {
@@ -19,8 +34,43 @@
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-family-poppins);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: var(--background-light);
+  color: var(--text-dark);
+  line-height: 1.6;
+  scroll-behavior: smooth;
+}
+section {
+  scroll-margin-top: 90px;
+
+}
+#about,
+#team,
+#services,
+#pricing,
+#faq,
+#contact {
+  scroll-margin-top: 90px;
 }
