@@ -1,8 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { API_ENDPOINTS } from "@/lib/config";
+
+interface ValidationError {
+  field: string;
+  message: string;
+}
 
 interface FormData {
   fullName: string;
@@ -28,7 +32,6 @@ interface BookingFormProps {
 }
 
 export default function BookingForm({ planId, planDetails }: BookingFormProps) {
-  const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
     contactNumber: "",
@@ -126,7 +129,7 @@ export default function BookingForm({ planId, planDetails }: BookingFormProps) {
 
     try {
       // Create booking with pricingPlanSlug
-      const bookingPayload: any = { 
+      const bookingPayload: Record<string, unknown> = { 
         ...formData,
         // Convert datetime-local to ISO8601 format
         preferredDateTime: new Date(formData.preferredDateTime).toISOString(),
@@ -150,7 +153,7 @@ export default function BookingForm({ planId, planDetails }: BookingFormProps) {
         console.error("Backend validation errors:", errorData);
         console.error("Payload sent:", bookingPayload);
         const errorMsg = errorData.errors 
-          ? errorData.errors.map((e: any) => `${e.field}: ${e.message}`).join('\n')
+          ? errorData.errors.map((e: ValidationError) => `${e.field}: ${e.message}`).join('\n')
           : errorData.message || "Failed to submit appointment request.";
         throw new Error(errorMsg);
       }
@@ -181,7 +184,7 @@ export default function BookingForm({ planId, planDetails }: BookingFormProps) {
           const errorData = await paymentResponse.json();
           console.error("Payment validation errors:", errorData);
           const errorMsg = errorData.errors 
-            ? errorData.errors.map((e: any) => `${e.field}: ${e.message}`).join('\n')
+            ? errorData.errors.map((e: ValidationError) => `${e.field}: ${e.message}`).join('\n')
             : errorData.message || "Failed to initialize payment";
           throw new Error(errorMsg);
         }
