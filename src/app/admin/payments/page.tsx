@@ -96,7 +96,7 @@ export default function AdminPayments() {
       if (!token) return;
 
       const res = await fetch(
-        API_ENDPOINTS.paymentsReceipt(paymentId),
+        API_ENDPOINTS.paymentsReceipt(paymentId.toString()),
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -127,7 +127,7 @@ export default function AdminPayments() {
       if (!token) return;
 
       const res = await fetch(
-        API_ENDPOINTS.paymentsRefund(paymentId),
+        API_ENDPOINTS.paymentsRefund(paymentId.toString()),
         {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },

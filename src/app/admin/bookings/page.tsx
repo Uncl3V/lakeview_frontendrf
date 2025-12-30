@@ -91,7 +91,7 @@ export default function AdminBookings() {
       if (!token) return;
 
       const res = await fetch(
-        API_ENDPOINTS.adminBookingStatus(bookingId),
+        API_ENDPOINTS.adminBookingStatus(bookingId.toString()),
         {
           method: "PATCH",
           headers: {

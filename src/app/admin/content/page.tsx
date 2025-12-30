@@ -82,7 +82,7 @@ export default function AdminContent() {
       const url =
         editingItem?.id === 0
           ? API_ENDPOINTS.adminContent(contentType)
-          : API_ENDPOINTS.adminContentById(contentType, editingItem?.id.toString());
+          : API_ENDPOINTS.adminContentById(contentType, String(editingItem?.id || ''));
 
       const method = editingItem?.id === 0 ? "POST" : "PUT";
 
