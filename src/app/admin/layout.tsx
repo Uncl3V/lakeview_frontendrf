@@ -16,6 +16,7 @@ import {
   Settings,
 } from "lucide-react";
 import { get } from "http";
+import Image from "next/image";
 
 interface User {
   id: string;
@@ -193,7 +194,7 @@ export default function AdminLayout({
             >
               <Menu size={24} />
             </button>
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-row  items-center justify-between w-full space-x-4">
               <div className="text-sm text-gray-600">
                 {new Date().toLocaleDateString("en-US", {
                   weekday: "long",
@@ -201,6 +202,12 @@ export default function AdminLayout({
                   month: "long",
                   day: "numeric",
                 })}
+              </div>
+              <div>
+                <Image src="/lakeviewlogo.jpg" 
+                alt="Lake View Logo" width={100} height={100} 
+                 />
+
               </div>
             </div>
           </div>
