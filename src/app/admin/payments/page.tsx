@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { API_ENDPOINTS } from "@/lib/config";
 import {
   Search,
@@ -28,6 +28,7 @@ interface Payment {
     appointmentDate: string;
   };
 }
+import { getToken } from "@/lib/auth";
 
 export default function AdminPayments() {
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -38,36 +39,34 @@ export default function AdminPayments() {
   const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
   const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    fetchPayments();
-  }, []);
+const fetchPayments = useCallback(async () => {
+  try {
+    const token = getToken();
+    if (!token) return;
 
-  useEffect(() => {
-    filterPayments();
-  }, [payments, searchTerm, statusFilter]);
+    const res = await fetch(API_ENDPOINTS.adminPayments, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-  const fetchPayments = async () => {
-    try {
-      const token = localStorage.getItem("adminToken");
-      if (!token) return;
+    if (!res.ok) throw new Error("Failed to fetch payments");
 
-      const res = await fetch(API_ENDPOINTS.adminPayments, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    const data = await res.json();
+    setPayments(data.data.payments);
+    setFilteredPayments(data.data.payments);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+}, []);
 
-      if (!res.ok) throw new Error("Failed to fetch payments");
 
-      const data = await res.json();
-      setPayments(data.data.payments);
-      setFilteredPayments(data.data.payments);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+useEffect(() => {
+  fetchPayments();
+}, [fetchPayments]);
 
-  const filterPayments = () => {
+
+  const filterPayments = useCallback(() => {
     let filtered = [...payments];
 
     // Search filter
@@ -88,7 +87,11 @@ export default function AdminPayments() {
     }
 
     setFilteredPayments(filtered);
-  };
+  }, [payments, searchTerm, statusFilter]);
+
+  useEffect(() => {
+    filterPayments();
+  }, [filterPayments]);
 
   const downloadReceipt = async (paymentId: number) => {
     try {

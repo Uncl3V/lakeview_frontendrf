@@ -6,10 +6,9 @@ import { Plus, Edit, Trash2, Save, X } from "lucide-react";
 
 type ContentType = "services" | "pricing" | "faqs" | "testimonials";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface ContentItem {
   id: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export default function AdminContent() {
@@ -43,7 +42,7 @@ export default function AdminContent() {
   }, [fetchContent]);
 
   const handleCreate = () => {
-    const newItem: any = { id: 0 };
+    const newItem: ContentItem = { id: 0 };
     
     // Set default fields based on content type
     if (contentType === "services") {
@@ -195,44 +194,44 @@ export default function AdminContent() {
         return (
           <>
             <td className="px-6 py-4 text-sm font-medium text-gray-900">
-              {item.name}
+              {String(item.name ?? "")}
             </td>
             <td className="px-6 py-4 text-sm text-gray-600 max-w-md truncate">
-              {item.description}
+              {String(item.description ?? "")}
             </td>
-            <td className="px-6 py-4 text-sm text-gray-600">{item.icon}</td>
+            <td className="px-6 py-4 text-sm text-gray-600">{String(item.icon ?? "")}</td>
           </>
         );
       case "pricing":
         return (
           <>
             <td className="px-6 py-4 text-sm font-medium text-gray-900">
-              {item.name}
+              {String(item.name ?? "")}
             </td>
             <td className="px-6 py-4 text-sm font-semibold text-gray-900">
-              ₦{item.price}
+              ₦{Number(item.price ?? 0).toLocaleString()}
             </td>
-            <td className="px-6 py-4 text-sm text-gray-600">{item.duration}</td>
+            <td className="px-6 py-4 text-sm text-gray-600">{String(item.duration ?? "")}</td>
           </>
         );
       case "faqs":
         return (
           <>
             <td className="px-6 py-4 text-sm font-medium text-gray-900 max-w-md truncate">
-              {item.question}
+              {String(item.question ?? "")}
             </td>
-            <td className="px-6 py-4 text-sm text-gray-600">{item.category}</td>
+            <td className="px-6 py-4 text-sm text-gray-600">{String(item.category ?? "")}</td>
           </>
         );
       case "testimonials":
         return (
           <>
             <td className="px-6 py-4 text-sm font-medium text-gray-900">
-              {item.name}
+                {String(item.name ?? "")} 
             </td>
-            <td className="px-6 py-4 text-sm text-gray-600">{item.role}</td>
+            <td className="px-6 py-4 text-sm text-gray-600">{String(item.role ?? "")}</td>
             <td className="px-6 py-4 text-sm text-yellow-600">
-              {"⭐".repeat(item.rating)}
+              {"⭐".repeat(Number(item.rating ?? 0))}
             </td>
           </>
         );
@@ -326,7 +325,7 @@ export default function AdminContent() {
                       colSpan={4}
                       className="px-6 py-12 text-center text-gray-500"
                     >
-                      No items found. Click "Add New" to create one.
+                      No items found. Click &quot;Add New&quot; to create one.
                     </td>
                   </tr>
                 )}
@@ -367,7 +366,7 @@ export default function AdminContent() {
                       </label>
                       {key === "description" || key === "content" || key === "answer" ? (
                         <textarea
-                          value={editingItem[key] || ""}
+                          value={String(editingItem[key] ?? "")}
                           onChange={(e) =>
                             setEditingItem({
                               ...editingItem,
@@ -380,7 +379,7 @@ export default function AdminContent() {
                       ) : (
                         <input
                           type={key === "price" || key === "rating" ? "number" : "text"}
-                          value={editingItem[key] || ""}
+                          value={String(editingItem[key] ?? "")}
                           onChange={(e) =>
                             setEditingItem({
                               ...editingItem,

@@ -13,6 +13,21 @@ import {
   AlertCircle,
 } from "lucide-react";
 
+interface Booking {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  serviceRequired: string;
+  status: string;
+  createdAt: string;
+  preferredDateTime?: string;
+  pricingPlan?: {
+    title: string;
+    price: string;
+  };
+}
+
 interface DashboardStats {
   totalBookings: number;
   totalRevenue: number;
@@ -30,7 +45,7 @@ interface DashboardStats {
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [recentBookings, setRecentBookings] = useState<any[]>([]);
+  const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -50,7 +65,21 @@ export default function AdminDashboard() {
 
       if (!statsRes.ok) throw new Error("Failed to fetch stats");
 
-      const statsData = await statsRes.json();
+      const statsData = (await statsRes.json()) as {
+        data: {
+            bookings: {
+            total: number;
+            pending: number;
+            confirmed: number;
+            completed: number;
+            };
+            payments: {
+            totalRevenue: number;
+            completed: number;
+            };
+        };
+        };
+
       
       // Transform backend data to match frontend interface
       const transformedStats = {
@@ -126,7 +155,7 @@ export default function AdminDashboard() {
       change: "+8%",
     },
     {
-      title: "Today's Bookings",
+      title: "Today&apos;s Bookings",
       value: stats?.todayBookings || 0,
       icon: TrendingUp,
       color: "bg-orange-500",
@@ -167,7 +196,7 @@ export default function AdminDashboard() {
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
         <p className="text-gray-600 mt-1">
-          Welcome back! Here's what's happening today.
+          Welcome back! Here&apos;s what&apos;s happening today.
         </p>
       </div>
 
@@ -305,10 +334,12 @@ export default function AdminDashboard() {
                     {booking.fullName}
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-600">
-                    {booking.service?.name || "N/A"}
+                    {booking.serviceRequired || booking.pricingPlan?.title || "N/A"}
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-600">
-                    {new Date(booking.appointmentDate).toLocaleDateString()}
+                    {booking.preferredDateTime 
+                      ? new Date(booking.preferredDateTime).toLocaleDateString()
+                      : new Date(booking.createdAt).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-3">
                     <span
@@ -326,7 +357,7 @@ export default function AdminDashboard() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                    ₦{booking.totalAmount?.toLocaleString() || "0"}
+                    ₦{booking.pricingPlan?.price || "0"}
                   </td>
                 </tr>
               ))}

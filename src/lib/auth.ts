@@ -1,4 +1,6 @@
 // Centralized auth utilities for enterprise-grade authentication
+"use client";
+
 import { API_ENDPOINTS } from './config';
 
 interface User {

@@ -3,17 +3,27 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import { getToken, getUser, logout } from "@/lib/auth";
 import {
   LayoutDashboard,
   Calendar,
-  DollarSign,
-  Users,
+  CreditCard,
   FileText,
-  Settings,
   LogOut,
   Menu,
   X,
+  User,
+  Settings,
 } from "lucide-react";
+import { get } from "http";
+
+interface User {
+  id: string;
+  email: string;
+  role: string;
+  name?: string;
+  fullName?: string;
+}
 
 export default function AdminLayout({
   children,
@@ -22,7 +32,7 @@ export default function AdminLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,15 +45,15 @@ export default function AdminLayout({
       return;
     }
 
-    const token = localStorage.getItem("adminToken");
-    const userData = localStorage.getItem("adminUser");
+    const token = getToken();
+    const userData = getUser();
 
     if (!token || !userData) {
       router.push("/admin");
       return;
     }
 
-    setUser(JSON.parse(userData));
+    setUser(userData);
     setIsLoading(false);
   }, [router, isLoginPage, pathname]);
 
@@ -87,19 +97,19 @@ export default function AdminLayout({
     {
       name: "Payments",
       href: "/admin/payments",
-      icon: DollarSign,
+      icon: CreditCard,
     },
     {
       name: "Content",
       href: "/admin/content",
       icon: FileText,
     },
-    {
+      {
       name: "Users",
       href: "/admin/users",
-      icon: Users,
+      icon: User,
     },
-    {
+      {
       name: "Settings",
       href: "/admin/settings",
       icon: Settings,
